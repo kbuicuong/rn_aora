@@ -6,10 +6,11 @@ import {
   ImageBackground,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import * as Animatable from "react-native-animatable";
 import { icons } from "@/constants";
-import { Video, ResizeMode } from "expo-av";
+import { useVideoPlayer, VideoView } from 'expo-video';
+import { useEvent } from "expo";
 
 const zoomIn = {
   0: {
@@ -29,33 +30,41 @@ const zoomOut = {
   },
 };
 
-const TrendingItem = ({ activeItem, item }) => {
-  const [play, setPlay] = React.useState<boolean>(false);
+const videoSource =
+  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 
+const TrendingItem = ({ activeItem, item }) => {
+
+  const player = useVideoPlayer(videoSource , (player) => {
+    player.loop = true;
+    // player.play();
+  });
+
+  const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
   return (
     <Animatable.View
       className="mr-5"
       animation={activeItem === item.$id ? (zoomIn as any) : (zoomOut as any)}
       duration={500}
     >
-      {play ? (
-        <Video
-          source={{ uri: item.video }}
-          className="w-52 h-72 rounded-[35px] mt-3 bg-white/10"
-          resizeMode={ResizeMode.CONTAIN}
-          useNativeControls
-          shouldPlay
-          onPlaybackStatusUpdate={(status) => {
-            if (status.isLoaded && !status.isBuffering && status.didJustFinish) {
-              setPlay(false);
-            }
-          }}
+      {isPlaying ? (
+        <VideoView 
+        player={player} 
+        allowsFullscreen 
+        allowsPictureInPicture
+        style={{ width: 350, height: 275 }}
         />
       ) : (
         <TouchableOpacity
           className="relative justify-center items-center"
           activeOpacity={0.7}
-          onPress={() => setPlay(true)}
+          onPress={() => {
+            if (isPlaying) {
+              player.pause();
+            } else {
+              player.play();
+            }
+          }}
         >
           <ImageBackground
             source={{ uri: item.thumbnail }}
