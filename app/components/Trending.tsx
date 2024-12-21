@@ -35,7 +35,7 @@ const videoSource =
 
 const TrendingItem = ({ activeItem, item }) => {
 
-  const player = useVideoPlayer(videoSource , (player) => {
+  const player = useVideoPlayer(item.video , (player) => {
     player.loop = true;
     // player.play();
   });
