@@ -30,8 +30,6 @@ const zoomOut = {
   },
 };
 
-const videoSource =
-  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 
 const TrendingItem = ({ activeItem, item }) => {
 
