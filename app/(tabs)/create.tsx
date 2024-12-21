@@ -13,14 +13,15 @@ import { useVideoPlayer, VideoSource, VideoView } from "expo-video";
 import { icons } from "@/constants";
 import CustomButton from "../components/CustomButton";
 import * as DocumentPicker from "expo-document-picker";
+import * as ImagePicker from 'expo-image-picker';
 import { router } from "expo-router";
 import { createVideo } from "@/lib/appwrite";
 import { useGlobalContext } from "@/context/GlobalProvider";
 
 type formType = {
   title: string;
-  video: DocumentPicker.DocumentPickerAsset | null;
-  thumbnail: DocumentPicker.DocumentPickerAsset | null;
+  video: ImagePicker.ImagePickerAsset | null;
+  thumbnail: ImagePicker.ImagePickerAsset | null;
   prompt: string;
 };
 
@@ -39,11 +40,11 @@ const Create = () => {
   });
 
   const openPicker = async (selectType: string) => {
-    const result = await DocumentPicker.getDocumentAsync({
-      type:
-        selectType === "image"
-          ? ["image/png", "image/jpg"]
-          : ["video/mp4", "video/gif"],
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images', 'videos'],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
     });
     if (!result.canceled) {
       if (selectType === "image") {
